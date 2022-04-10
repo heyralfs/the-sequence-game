@@ -13,4 +13,8 @@ export const AttemptBoard = styled.div<AttemptBoardProps>`
 	margin: 12px 0;
 	pointer-events: ${(props) =>
 		props.disabledPointerEvents ? "none" : "all"};
+
+	input {
+		cursor: pointer;
+	}
 `;

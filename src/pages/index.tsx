@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { useRef } from "react";
 import { AttemptField } from "./components/AttemptField";
+import { Button } from "./components/Button";
 import { useSequenceContext } from "./contexts/SequenceContext";
 
 const Home: NextPage = () => {
@@ -25,7 +26,7 @@ const Home: NextPage = () => {
 	};
 
 	return (
-		<div>
+		<div style={{ width: "420px", margin: "auto" }}>
 			<h1 style={{ textAlign: "center", fontSize: "3rem" }}>
 				SEQUENCE #1
 			</h1>
@@ -40,13 +41,12 @@ const Home: NextPage = () => {
 
 			<AttemptField attemptNumber={5} ref={attemptRef5} />
 
-			<button
+			<Button
+				text="SUBMIT"
 				type="button"
 				onClick={handleAttempt}
 				disabled={currentAttempt > 5}
-			>
-				SUBMIT
-			</button>
+			/>
 		</div>
 	);
 };
