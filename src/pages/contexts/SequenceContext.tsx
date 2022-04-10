@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import { toast } from "react-toastify";
 
 type Sequence = string[];
 type AttemptResult = string[];
@@ -33,13 +34,22 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 	const [results, setResults] = useState(initialResults);
 
 	function verifyAttempt(attempt: Sequence) {
-		if (currentAttempt <= 5) {
+		if (attempt.includes("")) {
+			toast.error("Hey, the sequence must have 5 numbers!", {
+				icon: "😅",
+				toastId: "error-toast",
+			});
+		} else if (currentAttempt <= 5) {
+			let playerWon = true;
+
 			const attemptResult: AttemptResult = sequence.map((n, i) => {
 				if (attempt[i] === n) {
 					return "correct";
 				} else if (sequence.includes(attempt[i])) {
+					playerWon = false;
 					return "partial";
 				}
+				playerWon = false;
 				return "incorrect";
 			});
 
@@ -47,7 +57,18 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 			updatedResults[currentAttempt - 1] = attemptResult;
 
 			setResults(updatedResults);
-			setCurrentAttempt((current) => current + 1);
+
+			if (playerWon) {
+				setCurrentAttempt(6); // updating to 6 prevents user from manipulating any input
+
+				setTimeout(() => {
+					toast.success("NICE JOB, YOU WON!!!", {
+						icon: "🎉",
+					});
+				}, 5 * 400);
+			} else {
+				setCurrentAttempt((current) => current + 1);
+			}
 		}
 	}
 

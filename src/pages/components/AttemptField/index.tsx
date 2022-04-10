@@ -1,10 +1,4 @@
-import {
-	forwardRef,
-	ForwardRefRenderFunction,
-	RefObject,
-	useEffect,
-	useRef,
-} from "react";
+import { forwardRef, ForwardRefRenderFunction, RefObject, useRef } from "react";
 import { useSequenceContext } from "../../contexts/SequenceContext";
 import { Input } from "../Input";
 import { AttemptBoard } from "./style";
