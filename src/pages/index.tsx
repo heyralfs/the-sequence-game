@@ -2,10 +2,10 @@ import type { NextPage } from "next";
 import { useRef } from "react";
 import Modal from "react-modal";
 
-import { AttemptField } from "./components/AttemptField";
-import { Button } from "./components/Button";
-import { Results } from "./components/Results";
-import { useSequenceContext } from "./contexts/SequenceContext";
+import { AttemptField } from "../components/AttemptField";
+import { Button } from "../components/Button";
+import { Results } from "../components/Results";
+import { useSequenceContext } from "../contexts/SequenceContext";
 
 const Home: NextPage = () => {
 	const { currentAttempt, playedToday } = useSequenceContext();
