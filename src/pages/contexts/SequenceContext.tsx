@@ -19,6 +19,7 @@ interface SequenceContextProps {
 	currentAttempt: number;
 	verifyAttempt: (attempt: Sequence) => void;
 	results: Results;
+	playedToday: "victory" | "defeat" | null;
 }
 
 interface ProviderProps {
@@ -33,13 +34,20 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 	const [currentAttempt, setCurrentAttempt] = useState(1);
 	const [results, setResults] = useState(initialResults);
 
+	const [playedToday, setPlayedToday] = useState<"victory" | "defeat" | null>(
+		null
+	);
+
 	function verifyAttempt(attempt: Sequence) {
 		if (attempt.includes("")) {
 			toast.error("Hey, the sequence must have 5 numbers!", {
 				icon: "😅",
 				toastId: "error-toast",
 			});
-		} else if (currentAttempt <= 5) {
+			return;
+		}
+
+		if (currentAttempt <= 5) {
 			let playerWon = true;
 
 			const attemptResult: AttemptResult = sequence.map((n, i) => {
@@ -62,9 +70,13 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 				setCurrentAttempt(6); // updating to 6 prevents user from manipulating any input
 
 				setTimeout(() => {
-					toast.success("NICE JOB, YOU WON!!!", {
-						icon: "🎉",
-					});
+					setPlayedToday("victory");
+				}, 5 * 400);
+			} else if (currentAttempt === 5) {
+				setCurrentAttempt(6);
+
+				setTimeout(() => {
+					setPlayedToday("defeat");
 				}, 5 * 400);
 			} else {
 				setCurrentAttempt((current) => current + 1);
@@ -74,7 +86,13 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 
 	return (
 		<SequenceContext.Provider
-			value={{ sequence, currentAttempt, verifyAttempt, results }}
+			value={{
+				sequence,
+				currentAttempt,
+				verifyAttempt,
+				results,
+				playedToday,
+			}}
 		>
 			{children}
 		</SequenceContext.Provider>

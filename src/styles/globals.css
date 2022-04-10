@@ -1,10 +1,13 @@
 :root {
 	--dark-blue: #1a1a2e;
+	--twitter-blue: #1da1f2;
 	--faded-white: rgba(255, 255, 255, 0.15);
 	--red: #f07470;
 	--yellow: #fec260;
 	--green: #4e9f3d;
 	--off-white: #f2edd7;
+
+	/* toastify vars */
 
 	--toastify-color-light: var(--off-white);
 	--toastify-color-dark: var(--dark-blue);
@@ -32,6 +35,7 @@ body {
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
 		Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 	background-color: var(--dark-blue);
+	color: var(--off-white);
 }
 
 a {
@@ -46,4 +50,25 @@ h1 {
 input {
 	border: 1px solid var(--faded-white);
 	background-color: var(--faded-white);
+}
+
+/* react-modal classes */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--faded-white);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.modal {
+	background-color: var(--dark-blue);
+	width: 100%;
+	max-width: 450px;
+	margin: auto;
+	padding: 1rem;
+	border-radius: 16px;
 }
