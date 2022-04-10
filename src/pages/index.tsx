@@ -1,14 +1,17 @@
 import type { NextPage } from "next";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
+import { IoInformationCircle } from "react-icons/io5";
 
 import { AttemptField } from "../components/AttemptField";
 import { Button } from "../components/Button";
+import { Instructions } from "../components/Instructions";
 import { Results } from "../components/Results";
 import { useSequenceContext } from "../contexts/SequenceContext";
 
 const Home: NextPage = () => {
 	const { currentAttempt, playedToday } = useSequenceContext();
+	const [openInstructions, setOpenInstructions] = useState(false);
 
 	const attemptRef1 = useRef<HTMLButtonElement>(null);
 	const attemptRef2 = useRef<HTMLButtonElement>(null);
@@ -27,6 +30,15 @@ const Home: NextPage = () => {
 	const handleAttempt = () => {
 		attempts[currentAttempt - 1].current?.click();
 	};
+
+	useEffect(() => {
+		const sequenceLocalItem = localStorage.getItem("sequence-game");
+
+		if (!sequenceLocalItem) {
+			localStorage.setItem("sequence-game", "{}");
+			setOpenInstructions(true);
+		}
+	}, []);
 
 	return (
 		<>
@@ -53,12 +65,36 @@ const Home: NextPage = () => {
 				/>
 			</div>
 
+			<IoInformationCircle
+				color="var(--off-white)"
+				onClick={() => setOpenInstructions(true)}
+				title="Show instructions"
+				size={20}
+				style={{
+					position: "absolute",
+					top: "16px",
+					left: "16px",
+					cursor: "pointer",
+				}}
+			/>
+
 			<Modal
 				isOpen={!!playedToday}
 				className="modal"
 				overlayClassName="modal-overlay"
 			>
 				<Results />
+			</Modal>
+
+			<Modal
+				isOpen={openInstructions}
+				shouldCloseOnEsc
+				shouldCloseOnOverlayClick
+				onRequestClose={() => setOpenInstructions(false)}
+				className="modal"
+				overlayClassName="modal-overlay"
+			>
+				<Instructions />
 			</Modal>
 		</>
 	);
