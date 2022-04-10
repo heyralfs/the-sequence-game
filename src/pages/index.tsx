@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import { IoInformationCircle } from "react-icons/io5";
@@ -8,9 +8,14 @@ import { Button } from "../components/Button";
 import { Instructions } from "../components/Instructions";
 import { Results } from "../components/Results";
 import { useSequenceContext } from "../contexts/SequenceContext";
+import { createSequence } from "../utils/createSequence";
 
-const Home: NextPage = () => {
-	const { currentAttempt, playedToday } = useSequenceContext();
+interface HomeProps {
+	sequence: string[];
+}
+
+const Home: NextPage<HomeProps> = ({ sequence: ssrSequence }) => {
+	const { currentAttempt, playedToday, setSequence } = useSequenceContext();
 	const [openInstructions, setOpenInstructions] = useState(false);
 
 	const attemptRef1 = useRef<HTMLButtonElement>(null);
@@ -38,6 +43,9 @@ const Home: NextPage = () => {
 			localStorage.setItem("sequence-game", "{}");
 			setOpenInstructions(true);
 		}
+
+		setSequence(ssrSequence);
+		// eslint-disable-next-line
 	}, []);
 
 	return (
@@ -101,3 +109,11 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+	return {
+		props: {
+			sequence: createSequence(),
+		},
+	};
+};

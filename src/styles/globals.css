@@ -50,6 +50,7 @@ h1 {
 input {
 	border: 1px solid var(--faded-white);
 	background-color: var(--faded-white);
+	color: var(--off-white);
 }
 
 /* react-modal classes */

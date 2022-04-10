@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+	createContext,
+	Dispatch,
+	ReactNode,
+	useContext,
+	useState,
+} from "react";
 import { toast } from "react-toastify";
 
 type Sequence = string[];
@@ -16,6 +22,7 @@ const initialResults: Results = [
 
 interface SequenceContextProps {
 	sequence: Sequence;
+	setSequence: Dispatch<Sequence>;
 	currentAttempt: number;
 	verifyAttempt: (attempt: Sequence) => void;
 	results: Results;
@@ -29,7 +36,7 @@ interface ProviderProps {
 const SequenceContext = createContext({} as SequenceContextProps);
 
 export const SequenceContextProvider = ({ children }: ProviderProps) => {
-	const sequence: Sequence = ["1", "2", "3", "4", "5"];
+	const [sequence, setSequence] = useState<Sequence>([]);
 
 	const [currentAttempt, setCurrentAttempt] = useState(1);
 	const [results, setResults] = useState(initialResults);
@@ -88,6 +95,7 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 		<SequenceContext.Provider
 			value={{
 				sequence,
+				setSequence,
 				currentAttempt,
 				verifyAttempt,
 				results,
