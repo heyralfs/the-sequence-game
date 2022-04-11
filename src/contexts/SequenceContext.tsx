@@ -23,6 +23,8 @@ const initialResults: Results = [
 interface SequenceContextProps {
 	sequence: Sequence;
 	setSequence: Dispatch<Sequence>;
+	sequenceNumber: number;
+	setSequenceNumber: Dispatch<number>;
 	currentAttempt: number;
 	verifyAttempt: (attempt: Sequence) => void;
 	results: Results;
@@ -37,6 +39,7 @@ const SequenceContext = createContext({} as SequenceContextProps);
 
 export const SequenceContextProvider = ({ children }: ProviderProps) => {
 	const [sequence, setSequence] = useState<Sequence>([]);
+	const [sequenceNumber, setSequenceNumber] = useState<number>(0);
 
 	const [currentAttempt, setCurrentAttempt] = useState(1);
 	const [results, setResults] = useState(initialResults);
@@ -96,6 +99,8 @@ export const SequenceContextProvider = ({ children }: ProviderProps) => {
 			value={{
 				sequence,
 				setSequence,
+				sequenceNumber,
+				setSequenceNumber,
 				currentAttempt,
 				verifyAttempt,
 				results,

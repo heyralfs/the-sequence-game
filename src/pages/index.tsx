@@ -2,6 +2,8 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import { IoInformationCircle } from "react-icons/io5";
+import { Client } from "@notionhq/client";
+import dayjs from "dayjs";
 
 import { AttemptField } from "../components/AttemptField";
 import { Button } from "../components/Button";
@@ -11,11 +13,16 @@ import { useSequenceContext } from "../contexts/SequenceContext";
 import { createSequence } from "../utils/createSequence";
 
 interface HomeProps {
+	sequenceNumber: number;
 	sequence: string[];
 }
 
-const Home: NextPage<HomeProps> = ({ sequence: ssrSequence }) => {
-	const { currentAttempt, playedToday, setSequence } = useSequenceContext();
+const Home: NextPage<HomeProps> = ({
+	sequence: ssrSequence,
+	sequenceNumber: ssrSequenceNumber,
+}) => {
+	const { currentAttempt, playedToday, setSequence, setSequenceNumber } =
+		useSequenceContext();
 	const [openInstructions, setOpenInstructions] = useState(false);
 
 	const attemptRef1 = useRef<HTMLButtonElement>(null);
@@ -45,6 +52,7 @@ const Home: NextPage<HomeProps> = ({ sequence: ssrSequence }) => {
 		}
 
 		setSequence(ssrSequence);
+		setSequenceNumber(ssrSequenceNumber);
 		// eslint-disable-next-line
 	}, []);
 
@@ -52,7 +60,7 @@ const Home: NextPage<HomeProps> = ({ sequence: ssrSequence }) => {
 		<>
 			<div style={{ width: "420px", margin: "auto" }}>
 				<h1 style={{ textAlign: "center", fontSize: "3rem" }}>
-					SEQUENCE #1
+					SEQUENCE #{ssrSequenceNumber}
 				</h1>
 
 				<AttemptField attemptNumber={1} ref={attemptRef1} />
@@ -111,9 +119,65 @@ const Home: NextPage<HomeProps> = ({ sequence: ssrSequence }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+	const DAY_ONE = "2022-04-11";
+	const today = dayjs().format("YYYY-MM-DD");
+
+	const databaseId = process.env.DATABASE_ID || "";
+	const notion = new Client({ auth: process.env.NOTION_INTEGRATION_TOKEN });
+
+	const { results } = await notion.databases.query({
+		database_id: databaseId,
+		filter: {
+			property: "Date",
+			date: { equals: today },
+		},
+	});
+
+	let sequence: string[];
+	let sequenceNumber: number;
+
+	if (results.length) {
+		// 👇 https://github.com/makenotion/notion-sdk-js/issues/154
+		const sequenceData: any = results[0];
+
+		sequence =
+			sequenceData.properties.Sequence.title[0].text.content.split("");
+		sequenceNumber = sequenceData.properties.Number.number;
+	} else {
+		sequence = createSequence();
+		sequenceNumber = dayjs(today).diff(DAY_ONE, "day") + 1;
+
+		// save on notion
+		await notion.pages.create({
+			parent: { database_id: databaseId },
+			properties: {
+				Number: {
+					number: sequenceNumber,
+				},
+				Date: {
+					date: {
+						start: today,
+						end: null,
+						time_zone: null,
+					},
+				},
+				Sequence: {
+					title: [
+						{
+							text: {
+								content: sequence.join(""),
+							},
+						},
+					],
+				},
+			},
+		});
+	}
+
 	return {
 		props: {
-			sequence: createSequence(),
+			sequenceNumber,
+			sequence,
 		},
 	};
 };
