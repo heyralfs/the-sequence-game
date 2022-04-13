@@ -33,25 +33,26 @@ export const GameBoard = ({
 
 	return (
 		<>
-			<form
-				onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
-			>
-				{renderHelper.map((w) => {
+			<form onSubmit={handleSubmit(onSubmit)}>
+				{renderHelper.map((line) => {
 					return (
-						<AttemptLine key={`attempt_${w}`}>
-							{renderHelper.map((v, index) => (
+						<AttemptLine key={`attempt_${line}`}>
+							{renderHelper.map((col, index) => (
 								<Input
-									{...register(`input_${w}_${v}`)}
-									key={`input_${w}_${v}`}
+									{...register(`input_${line}_${col}`)}
+									key={`input_${line}_${col}`}
 									maxLength={1}
-									className={results[w - 1][v - 1]}
-									disabled={currentAttempt !== w}
+									className={results[line - 1][col - 1]}
+									disabled={currentAttempt !== line}
 									onChange={(e) => {
 										if (index === 4) return;
 										if (e.target.value.length) {
-											setFocus(`input_${w}_${v + 1}`, {
-												shouldSelect: true,
-											});
+											setFocus(
+												`input_${line}_${col + 1}`,
+												{
+													shouldSelect: true,
+												}
+											);
 										}
 									}}
 								/>
