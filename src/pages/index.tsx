@@ -1,58 +1,91 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { IoInformationCircle } from "react-icons/io5";
 import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
 
-import { AttemptField } from "../components/AttemptField";
-import { Button } from "../components/Button";
 import { Instructions } from "../components/Instructions";
 import { Results } from "../components/Results";
-import { useSequenceContext } from "../contexts/SequenceContext";
 import { createSequence } from "../utils/createSequence";
+import { GameBoard } from "../components/GameBoard";
+import { toast } from "react-toastify";
+
+const initialAttemptResult = ["", "", "", "", ""];
+const initialResults = [
+	initialAttemptResult,
+	initialAttemptResult,
+	initialAttemptResult,
+	initialAttemptResult,
+	initialAttemptResult,
+];
 
 interface HomeProps {
-	sequenceNumber: number;
+	gameNumber: number;
 	sequence: string[];
 }
 
-const Home: NextPage<HomeProps> = ({
-	sequence: ssrSequence,
-	sequenceNumber: ssrSequenceNumber,
-}) => {
-	const { currentAttempt, playedToday, setSequence, setSequenceNumber } =
-		useSequenceContext();
+const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 	const [openInstructions, setOpenInstructions] = useState(false);
+	const [currentAttempt, setCurrentAttempt] = useState(1);
+	const [results, setResults] = useState(initialResults);
+	const [playedToday, setPlayedToday] = useState<"victory" | "defeat" | null>(
+		null
+	);
 
-	const attemptRef1 = useRef<HTMLButtonElement>(null);
-	const attemptRef2 = useRef<HTMLButtonElement>(null);
-	const attemptRef3 = useRef<HTMLButtonElement>(null);
-	const attemptRef4 = useRef<HTMLButtonElement>(null);
-	const attemptRef5 = useRef<HTMLButtonElement>(null);
+	function verifyAttempt(attempt: string[]) {
+		if (attempt.includes("")) {
+			toast.error("Hey, the sequence must have 5 numbers!", {
+				icon: "😅",
+				toastId: "error-toast",
+			});
+			return;
+		}
 
-	const attempts = [
-		attemptRef1,
-		attemptRef2,
-		attemptRef3,
-		attemptRef4,
-		attemptRef5,
-	];
+		if (currentAttempt <= 5) {
+			let playerWon = true;
 
-	const handleAttempt = () => {
-		attempts[currentAttempt - 1].current?.click();
-	};
+			const attemptResult: string[] = sequence.map((n, i) => {
+				if (attempt[i] === n) {
+					return "correct";
+				} else if (sequence.includes(attempt[i])) {
+					playerWon = false;
+					return "partial";
+				}
+				playerWon = false;
+				return "incorrect";
+			});
 
+			const updatedResults = results;
+			updatedResults[currentAttempt - 1] = attemptResult;
+
+			setResults(updatedResults);
+
+			if (playerWon) {
+				setCurrentAttempt(6); // updating to 6 prevents user from manipulating any input
+
+				setTimeout(() => {
+					setPlayedToday("victory");
+				}, 5 * 400);
+			} else if (currentAttempt === 5) {
+				setCurrentAttempt(6);
+
+				setTimeout(() => {
+					setPlayedToday("defeat");
+				}, 5 * 400);
+			} else {
+				setCurrentAttempt((current) => current + 1);
+			}
+		}
+	}
+
+	// handle initial states
 	useEffect(() => {
 		const sequenceLocalItem = localStorage.getItem("sequence-game");
-
 		if (!sequenceLocalItem) {
 			localStorage.setItem("sequence-game", "{}");
 			setOpenInstructions(true);
 		}
-
-		setSequence(ssrSequence);
-		setSequenceNumber(ssrSequenceNumber);
 		// eslint-disable-next-line
 	}, []);
 
@@ -60,24 +93,13 @@ const Home: NextPage<HomeProps> = ({
 		<>
 			<div style={{ width: "420px", margin: "auto" }}>
 				<h1 style={{ textAlign: "center", fontSize: "3rem" }}>
-					SEQUENCE #{ssrSequenceNumber}
+					SEQUENCE #{gameNumber}
 				</h1>
 
-				<AttemptField attemptNumber={1} ref={attemptRef1} />
-
-				<AttemptField attemptNumber={2} ref={attemptRef2} />
-
-				<AttemptField attemptNumber={3} ref={attemptRef3} />
-
-				<AttemptField attemptNumber={4} ref={attemptRef4} />
-
-				<AttemptField attemptNumber={5} ref={attemptRef5} />
-
-				<Button
-					text="SUBMIT"
-					type="button"
-					onClick={handleAttempt}
-					disabled={currentAttempt > 5}
+				<GameBoard
+					currentAttempt={currentAttempt}
+					verifyAttempt={verifyAttempt}
+					results={results}
 				/>
 			</div>
 
@@ -99,7 +121,7 @@ const Home: NextPage<HomeProps> = ({
 				className="modal"
 				overlayClassName="modal-overlay"
 			>
-				<Results />
+				<Results playedToday={playedToday} results={results} />
 			</Modal>
 
 			<Modal
@@ -134,7 +156,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 	});
 
 	let sequence: string[];
-	let sequenceNumber: number;
+	let gameNumber: number;
 
 	if (results.length) {
 		// 👇 https://github.com/makenotion/notion-sdk-js/issues/154
@@ -142,17 +164,17 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 
 		sequence =
 			sequenceData.properties.Sequence.title[0].text.content.split("");
-		sequenceNumber = sequenceData.properties.Number.number;
+		gameNumber = sequenceData.properties.Number.number;
 	} else {
 		sequence = createSequence();
-		sequenceNumber = dayjs(today).diff(DAY_ONE, "day") + 1;
+		gameNumber = dayjs(today).diff(DAY_ONE, "day") + 1;
 
 		// save on notion
 		await notion.pages.create({
 			parent: { database_id: databaseId },
 			properties: {
 				Number: {
-					number: sequenceNumber,
+					number: gameNumber,
 				},
 				Date: {
 					date: {
@@ -176,7 +198,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 
 	return {
 		props: {
-			sequenceNumber,
+			gameNumber,
 			sequence,
 		},
 	};
