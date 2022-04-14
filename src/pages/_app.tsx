@@ -7,12 +7,14 @@ import Modal from "react-modal";
 
 import { Footer } from "../components/Footer";
 import { GitHubCorner } from "../components/GitHubCorner";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
 
 function MyApp({ Component, pageProps }: AppProps) {
 	Modal.setAppElement("#__next");
 
 	return (
-		<>
+		<Provider store={store}>
 			<GitHubCorner projectUrl="https://github.com/heyralfs/the-sequence-game" />
 			<Component {...pageProps} />
 			<Footer />
@@ -28,7 +30,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 				draggable
 				pauseOnHover
 			/>
-		</>
+		</Provider>
 	);
 }
 

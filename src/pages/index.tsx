@@ -1,7 +1,5 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useEffect, useState } from "react";
-import Modal from "react-modal";
-import { IoInformationCircle } from "react-icons/io5";
 import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
 
@@ -9,16 +7,9 @@ import { Instructions } from "../components/Instructions";
 import { Results } from "../components/Results";
 import { createSequence } from "../utils/createSequence";
 import { GameBoard } from "../components/GameBoard";
-import { toast } from "react-toastify";
-
-const initialAttemptResult = ["", "", "", "", ""];
-const initialResults = [
-	initialAttemptResult,
-	initialAttemptResult,
-	initialAttemptResult,
-	initialAttemptResult,
-	initialAttemptResult,
-];
+import { ShowInstructionsButton } from "../components/ShowInstructionsButton";
+import { useDispatch } from "react-redux";
+import { setSequence } from "../redux/gameSlice";
 
 interface HomeProps {
 	gameNumber: number;
@@ -27,65 +18,16 @@ interface HomeProps {
 
 const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 	const [openInstructions, setOpenInstructions] = useState(false);
-	const [currentAttempt, setCurrentAttempt] = useState(1);
-	const [results, setResults] = useState(initialResults);
-	const [playedToday, setPlayedToday] = useState<"victory" | "defeat" | null>(
-		null
-	);
+	const dispatch = useDispatch();
 
-	function verifyAttempt(attempt: string[]) {
-		if (attempt.includes("")) {
-			toast.error("Hey, the sequence must have 5 numbers!", {
-				icon: "😅",
-				toastId: "error-toast",
-			});
-			return;
-		}
-
-		if (currentAttempt <= 5) {
-			let playerWon = true;
-
-			const attemptResult: string[] = sequence.map((n, i) => {
-				if (attempt[i] === n) {
-					return "correct";
-				} else if (sequence.includes(attempt[i])) {
-					playerWon = false;
-					return "partial";
-				}
-				playerWon = false;
-				return "incorrect";
-			});
-
-			const updatedResults = results;
-			updatedResults[currentAttempt - 1] = attemptResult;
-
-			setResults(updatedResults);
-
-			if (playerWon) {
-				setCurrentAttempt(6); // updating to 6 prevents user from manipulating any input
-
-				setTimeout(() => {
-					setPlayedToday("victory");
-				}, 5 * 400);
-			} else if (currentAttempt === 5) {
-				setCurrentAttempt(6);
-
-				setTimeout(() => {
-					setPlayedToday("defeat");
-				}, 5 * 400);
-			} else {
-				setCurrentAttempt((current) => current + 1);
-			}
-		}
-	}
-
-	// handle initial states
 	useEffect(() => {
 		const sequenceLocalItem = localStorage.getItem("sequence-game");
 		if (!sequenceLocalItem) {
 			localStorage.setItem("sequence-game", "{}");
 			setOpenInstructions(true);
 		}
+
+		dispatch(setSequence(sequence));
 		// eslint-disable-next-line
 	}, []);
 
@@ -96,44 +38,17 @@ const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 					SEQUENCE #{gameNumber}
 				</h1>
 
-				<GameBoard
-					currentAttempt={currentAttempt}
-					verifyAttempt={verifyAttempt}
-					results={results}
-				/>
+				<GameBoard />
+
+				<Results />
 			</div>
 
-			<IoInformationCircle
-				color="var(--off-white)"
-				onClick={() => setOpenInstructions(true)}
-				title="Show instructions"
-				size={20}
-				style={{
-					position: "absolute",
-					top: "16px",
-					left: "16px",
-					cursor: "pointer",
-				}}
-			/>
+			<ShowInstructionsButton onClick={() => setOpenInstructions(true)} />
 
-			<Modal
-				isOpen={!!playedToday}
-				className="modal"
-				overlayClassName="modal-overlay"
-			>
-				<Results playedToday={playedToday} results={results} />
-			</Modal>
-
-			<Modal
+			<Instructions
 				isOpen={openInstructions}
-				shouldCloseOnEsc
-				shouldCloseOnOverlayClick
 				onRequestClose={() => setOpenInstructions(false)}
-				className="modal"
-				overlayClassName="modal-overlay"
-			>
-				<Instructions />
-			</Modal>
+			/>
 		</>
 	);
 };

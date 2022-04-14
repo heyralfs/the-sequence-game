@@ -1,14 +1,18 @@
+import Modal from "react-modal";
 import { ShareOnTwitterButton } from "./ShareOnTwitterButton";
 import { ResultsContainer } from "./style";
 
-interface ResultsProps {
-	results: string[][];
-	playedToday: "victory" | "defeat" | null;
-}
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { useEffect, useState } from "react";
+import { Button } from "../Button";
 
-export const Results = ({ playedToday, results }: ResultsProps) => {
+export const Results = () => {
+	const { results, playedToday } = useSelector(
+		(state: RootState) => state.game
+	);
+
 	const validAttempts = results.filter((attempt) => attempt[0].length);
-
 	const resultsInEmojis = validAttempts
 		.map((attempt) => {
 			return attempt
@@ -29,14 +33,44 @@ export const Results = ({ playedToday, results }: ResultsProps) => {
 		playedToday === "victory" ? `✌️ ${validAttempts.length}/5` : "☠️"
 	}\n\n${resultsInEmojis}`;
 
+	const [showResults, setShowResults] = useState(false);
+	const [showButton, setShowButton] = useState(false);
+	useEffect(() => {
+		if (playedToday) {
+			setTimeout(() => {
+				setShowResults(true);
+				setShowButton(true);
+			}, 5 * 400);
+		}
+	}, [playedToday]);
+
 	return (
-		<ResultsContainer>
-			{playedToday === "victory" && <h3>You won! 🎉</h3>}
-			{playedToday === "defeat" && <h3>Sorry but not this time! 😔</h3>}
+		<>
+			<Modal
+				isOpen={showResults}
+				className="modal"
+				overlayClassName="modal-overlay"
+				onRequestClose={() => setShowResults(false)}
+			>
+				<ResultsContainer>
+					{playedToday === "victory" && <h3>You won! 🎉</h3>}
+					{playedToday === "defeat" && (
+						<h3>Sorry but not this time! 😔</h3>
+					)}
 
-			<p>Come back tomorrow for another sequence 😉</p>
+					<p>Come back tomorrow for another sequence 😉</p>
 
-			<ShareOnTwitterButton tweet={tweetText} />
-		</ResultsContainer>
+					<ShareOnTwitterButton tweet={tweetText} />
+				</ResultsContainer>
+			</Modal>
+
+			{showButton && (
+				<Button
+					text="SHOW RESULT"
+					onClick={() => setShowResults(true)}
+					style={{ margin: "1rem auto" }}
+				/>
+			)}
+		</>
 	);
 };

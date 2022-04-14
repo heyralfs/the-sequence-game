@@ -1,3 +1,4 @@
+import Modal from "react-modal";
 import { Input } from "../Input";
 
 const style = {
@@ -8,9 +9,21 @@ const style = {
 	marginRight: "4px",
 };
 
-export const Instructions = () => {
+interface InstructionsProps {
+	isOpen: boolean;
+	onRequestClose: () => void;
+}
+
+export const Instructions = ({ isOpen, onRequestClose }: InstructionsProps) => {
 	return (
-		<>
+		<Modal
+			isOpen={isOpen}
+			shouldCloseOnEsc
+			shouldCloseOnOverlayClick
+			onRequestClose={onRequestClose}
+			className="modal"
+			overlayClassName="modal-overlay"
+		>
 			<h3>Instructions</h3>
 
 			<p>Find the correct sequence of numbers in 5 tries.</p>
@@ -54,6 +67,6 @@ export const Instructions = () => {
 			</p>
 
 			<p>New day, new sequence.</p>
-		</>
+		</Modal>
 	);
 };
