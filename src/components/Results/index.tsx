@@ -68,7 +68,7 @@ export const Results = () => {
 				<Button
 					text="SHOW RESULT"
 					onClick={() => setShowResults(true)}
-					style={{ margin: "1rem auto" }}
+					style={{ marginTop: "1rem" }}
 				/>
 			)}
 		</>

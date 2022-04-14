@@ -1,9 +1,6 @@
 import styled from "styled-components";
 
 export const StyledInput = styled.input`
-	width: 80px;
-	height: 80px;
-
 	border: 1px solid var(--faded-white);
 	border-radius: 12px;
 

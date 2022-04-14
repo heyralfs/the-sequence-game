@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StyledButton = styled.button`
 	width: 100%;
-	height: 50px;
+	aspect-ratio: 7 / 1;
 	margin-top: 16px;
 
 	border-radius: 8px;
@@ -14,6 +14,9 @@ export const StyledButton = styled.button`
 	font-weight: bold;
 	letter-spacing: 1px;
 	font-size: 1.2rem;
+	@media (max-width: 375px) {
+		font-size: 1rem;
+	}
 
 	cursor: pointer;
 

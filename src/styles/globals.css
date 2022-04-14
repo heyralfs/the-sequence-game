@@ -64,6 +64,7 @@ input {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 16px;
 }
 .modal {
 	background-color: var(--dark-blue);

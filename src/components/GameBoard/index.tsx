@@ -2,11 +2,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { tryToGuess } from "../../redux/gameSlice";
 
-import { AttemptLine } from "./style";
+import { AttemptLine, Form } from "./style";
 import { Button } from "../Button";
 import { Input } from "../Input";
-import { tryToGuess } from "../../redux/gameSlice";
 
 type FormValues = {
 	[key: string]: string;
@@ -36,7 +36,7 @@ export const GameBoard = () => {
 
 	return (
 		<>
-			<form
+			<Form
 				onSubmit={handleSubmit(onSubmit)}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") e.preventDefault();
@@ -78,7 +78,7 @@ export const GameBoard = () => {
 				})}
 
 				<Button text="SUBMIT" type="submit" disabled={!!playedToday} />
-			</form>
+			</Form>
 		</>
 	);
 };

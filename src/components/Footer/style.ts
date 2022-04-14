@@ -1,11 +1,9 @@
 import styled from "styled-components";
 
 export const StyledFooter = styled.footer`
-	position: absolute;
-	bottom: 0;
-
 	width: 100%;
-	padding: 16px 0;
+	height: 100px;
+	margin-top: 16px;
 
 	display: flex;
 	justify-content: center;

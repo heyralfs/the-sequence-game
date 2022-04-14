@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
 
-import { Instructions } from "../components/Instructions";
-import { Results } from "../components/Results";
-import { createSequence } from "../utils/createSequence";
-import { GameBoard } from "../components/GameBoard";
-import { ShowInstructionsButton } from "../components/ShowInstructionsButton";
 import { useDispatch } from "react-redux";
 import { setSequence } from "../redux/gameSlice";
+
+import { createSequence } from "../utils/createSequence";
+
+import { Board, Title } from "../styles/Home.style";
+import { Instructions } from "../components/Instructions";
+import { Results } from "../components/Results";
+import { GameBoard } from "../components/GameBoard";
+import { ShowInstructionsButton } from "../components/ShowInstructionsButton";
 
 interface HomeProps {
 	gameNumber: number;
@@ -33,15 +36,13 @@ const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 
 	return (
 		<>
-			<div style={{ width: "420px", margin: "auto" }}>
-				<h1 style={{ textAlign: "center", fontSize: "3rem" }}>
-					SEQUENCE #{gameNumber}
-				</h1>
+			<Board>
+				<Title>SEQUENCE #{gameNumber}</Title>
 
 				<GameBoard />
 
 				<Results />
-			</div>
+			</Board>
 
 			<ShowInstructionsButton onClick={() => setOpenInstructions(true)} />
 
