@@ -5,6 +5,7 @@ import Document, {
 	NextScript,
 	DocumentContext,
 } from "next/document";
+import React from "react";
 import { ServerStyleSheet } from "styled-components";
 
 class MyDocument extends Document {
@@ -31,15 +32,15 @@ class MyDocument extends Document {
 				});
 
 			const initialProps = await Document.getInitialProps(ctx);
-			return {
-				...initialProps,
-				styles: (
-					<>
-						{initialProps.styles}
-						{sheet.getStyleElement()}
-					</>
-				),
-			};
+
+			initialProps.styles = (
+				<>
+					{initialProps.styles}
+					{sheet.getStyleElement()}
+				</>
+			) as unknown as React.ReactElement[];
+
+			return initialProps;
 		} finally {
 			sheet.seal();
 		}
