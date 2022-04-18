@@ -63,7 +63,7 @@ const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-	const DAY_ONE = "2022-04-11";
+	const DAY_ONE = "2022-04-18";
 	const today = dayjs().format("YYYY-MM-DD");
 
 	const databaseId = process.env.DATABASE_ID || "";
