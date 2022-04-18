@@ -68,7 +68,13 @@ export const GameBoard = () => {
 											!!playedToday ||
 											attemptNumber !== line
 										}
+										inputMode="numeric"
 										onChange={(e) => {
+											e.target.value =
+												e.target.value.replace(
+													/[^0-9\.]+/g,
+													""
+												);
 											if (index === 4) return;
 											if (e.target.value.length) {
 												setFocus(
