@@ -9,28 +9,34 @@ import { Footer } from "../components/Footer";
 import { GitHubCorner } from "../components/GitHubCorner";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
 	Modal.setAppElement("#__next");
 
 	return (
-		<Provider store={store}>
-			<GitHubCorner projectUrl="https://github.com/heyralfs/the-sequence-game" />
-			<Component {...pageProps} />
-			<Footer />
+		<>
+			<Head>
+				<title>The Sequence Game</title>
+			</Head>
+			<Provider store={store}>
+				<GitHubCorner projectUrl="https://github.com/heyralfs/the-sequence-game" />
+				<Component {...pageProps} />
+				<Footer />
 
-			<ToastContainer
-				position="top-center"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss={false}
-				draggable
-				pauseOnHover
-			/>
-		</Provider>
+				<ToastContainer
+					position="top-center"
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss={false}
+					draggable
+					pauseOnHover
+				/>
+			</Provider>
+		</>
 	);
 }
 
