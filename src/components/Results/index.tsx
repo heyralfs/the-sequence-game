@@ -1,13 +1,25 @@
 import Modal from "react-modal";
-import { ShareOnTwitterButton } from "./ShareOnTwitterButton";
-import { ResultsContainer } from "./style";
+import { useEffect, useState } from "react";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { useEffect, useState } from "react";
+
+import { ResultsContainer } from "./style";
+import { ShareOnTwitterButton } from "./ShareOnTwitterButton";
 import { Button } from "../Button";
 
+import { localStorageHandlers } from "../../utils/localStorageHandlers";
+import StatsBoard from "./StatsBoard";
+
+type Stats = {
+	wins: number;
+	games: number;
+	histo: number[];
+};
+
 export const Results = () => {
+	const [stats, setStats] = useState<Stats>();
+
 	const { results, playedToday } = useSelector(
 		(state: RootState) => state.game
 	);
@@ -37,6 +49,9 @@ export const Results = () => {
 	const [showButton, setShowButton] = useState(false);
 	useEffect(() => {
 		if (playedToday) {
+			const localObject = localStorageHandlers.get();
+			if (localObject) setStats(localObject.stats);
+
 			setTimeout(() => {
 				setShowResults(true);
 				setShowButton(true);
@@ -53,10 +68,12 @@ export const Results = () => {
 				onRequestClose={() => setShowResults(false)}
 			>
 				<ResultsContainer>
-					{playedToday === "victory" && <h3>You won! 🎉</h3>}
+					{playedToday === "victory" && <h2>You won! 🎉</h2>}
 					{playedToday === "defeat" && (
-						<h3>Sorry but not this time! 😔</h3>
+						<h2>Sorry but not this time! 😔</h2>
 					)}
+
+					<StatsBoard stats={stats} />
 
 					<p>Come back tomorrow for another sequence 😉</p>
 

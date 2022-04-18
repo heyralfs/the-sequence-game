@@ -24,16 +24,18 @@ export interface LocalStorageObject {
 //	✅ Game over (wheter the player won or lost) // Update stats, when the game is over
 //--------------------------------------------------------------------------------------------------------
 
-export function getLocalStorageObject(): LocalStorageObject {
-	return JSON.parse(localStorage.getItem("sequence-game") || "{}");
+function getLocalStorageObject(): LocalStorageObject | undefined {
+	const localStorageObject = localStorage.getItem("sequence-game");
+	if (!localStorageObject) return undefined;
+	return JSON.parse(localStorageObject);
 }
 
-export function createLocalStorageObject(gameNumber: number): void {
+function createLocalStorageObject(gameNumber: number): void {
 	const localStorageObject: LocalStorageObject = {
 		stats: {
 			games: 0,
 			wins: 0,
-			histo: [],
+			histo: [0, 0, 0, 0, 0, 0],
 		},
 		state: {
 			lastGame: gameNumber,
@@ -45,14 +47,18 @@ export function createLocalStorageObject(gameNumber: number): void {
 	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
 }
 
-export function updateTries(currentTry: string[]): void {
+function updateTries(currentTry: string[]): void {
 	const localStorageObject = getLocalStorageObject();
+	if (!localStorageObject) return;
+
 	localStorageObject.state.tries.push(currentTry);
 	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
 }
 
-export function clearLocalStorageState(gameNumber: number): void {
+function clearLocalStorageState(gameNumber: number): void {
 	const localStorageObject = getLocalStorageObject();
+	if (!localStorageObject) return;
+
 	localStorageObject.state = {
 		lastGame: gameNumber,
 		tries: [],
@@ -68,12 +74,14 @@ type GameOverParams = {
 	won: boolean;
 };
 
-export function gameOver({
+function setGameOver({
 	lastAttemptNumber,
 	lastTry,
 	won,
 }: GameOverParams): void {
 	const localStorageObject = getLocalStorageObject();
+	if (!localStorageObject) return;
+
 	const { stats, state } = localStorageObject;
 
 	localStorageObject.stats = {
@@ -93,3 +101,11 @@ export function gameOver({
 
 	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
 }
+
+export const localStorageHandlers = {
+	get: getLocalStorageObject,
+	create: createLocalStorageObject,
+	updateTries,
+	setGameOver,
+	clearGameData: clearLocalStorageState,
+};

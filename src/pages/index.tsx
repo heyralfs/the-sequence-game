@@ -4,7 +4,7 @@ import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
 
 import { useDispatch } from "react-redux";
-import { setSequence } from "../redux/gameSlice";
+import { setInitialValues, setSequence } from "../redux/gameSlice";
 
 import { createSequence } from "../utils/createSequence";
 
@@ -13,6 +13,7 @@ import { Instructions } from "../components/Instructions";
 import { Results } from "../components/Results";
 import { GameBoard } from "../components/GameBoard";
 import { ShowInstructionsButton } from "../components/ShowInstructionsButton";
+import { localStorageHandlers } from "../utils/localStorageHandlers";
 
 interface HomeProps {
 	gameNumber: number;
@@ -24,10 +25,15 @@ const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		const sequenceLocalItem = localStorage.getItem("sequence-game");
+		const sequenceLocalItem = localStorageHandlers.get();
+
 		if (!sequenceLocalItem) {
-			localStorage.setItem("sequence-game", "{}");
+			localStorageHandlers.create(gameNumber);
 			setOpenInstructions(true);
+		} else if (sequenceLocalItem.state.lastGame === gameNumber) {
+			dispatch(setInitialValues({ sequence, game: sequenceLocalItem }));
+		} else {
+			localStorageHandlers.clearGameData(gameNumber);
 		}
 
 		dispatch(setSequence(sequence));

@@ -7,6 +7,8 @@ import { tryToGuess } from "../../redux/gameSlice";
 import { AttemptLine, Form } from "./style";
 import { Button } from "../Button";
 import { Input } from "../Input";
+import { formatRHFDefaultValues } from "../../utils/formatRHFDefaultValues";
+import { useEffect } from "react";
 
 type FormValues = {
 	[key: string]: string;
@@ -15,12 +17,12 @@ type FormValues = {
 export const GameBoard = () => {
 	const dispatch = useDispatch();
 
-	const { results, playedToday } = useSelector(
+	const { results, playedToday, tries } = useSelector(
 		(state: RootState) => state.game
 	);
 
 	const renderHelper = [1, 2, 3, 4, 5]; // helps to render the input matrix
-	const { register, setFocus, handleSubmit } = useForm<FormValues>();
+	const { register, setFocus, handleSubmit, reset } = useForm<FormValues>();
 
 	const onSubmit: SubmitHandler<FormValues> = (data) => {
 		const attemptNumber = results.length + 1;
@@ -33,6 +35,11 @@ export const GameBoard = () => {
 
 		dispatch(tryToGuess({ attempt: attemptValues }));
 	};
+
+	useEffect(() => {
+		reset(formatRHFDefaultValues(tries));
+		// eslint-disable-next-line
+	}, [tries]);
 
 	return (
 		<>
