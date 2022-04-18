@@ -43,7 +43,7 @@ export const Results = () => {
 
 	const tweetText = `I just played The Sequence Game #1 ${
 		playedToday === "victory" ? `✌️ ${validAttempts.length}/5` : "☠️"
-	}\n\n${resultsInEmojis}`;
+	}\n\n${resultsInEmojis}\n\nthesequencegame.vercel.app`;
 
 	const [showResults, setShowResults] = useState(false);
 	const [showButton, setShowButton] = useState(false);
