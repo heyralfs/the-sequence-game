@@ -47,7 +47,7 @@ const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
 
 				<GameBoard />
 
-				<Results />
+				<Results gameNumber={gameNumber} />
 			</Board>
 
 			<ShowInstructionsButton onClick={() => setOpenInstructions(true)} />

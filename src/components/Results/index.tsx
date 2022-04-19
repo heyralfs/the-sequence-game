@@ -17,7 +17,11 @@ type Stats = {
 	histo: number[];
 };
 
-export const Results = () => {
+interface ResultsProps {
+	gameNumber: number;
+}
+
+export const Results = ({ gameNumber }: ResultsProps) => {
 	const [stats, setStats] = useState<Stats>();
 
 	const { results, playedToday } = useSelector(
@@ -41,7 +45,7 @@ export const Results = () => {
 		})
 		.join("\n");
 
-	const tweetText = `I just played The Sequence Game #1 ${
+	const tweetText = `I just played The Sequence Game #${gameNumber} ${
 		playedToday === "victory" ? `✌️ ${validAttempts.length}/5` : "☠️"
 	}\n\n${resultsInEmojis}\n\nthesequencegame.vercel.app`;
 
