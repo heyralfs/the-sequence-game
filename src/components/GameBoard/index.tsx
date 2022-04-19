@@ -8,7 +8,7 @@ import { AttemptLine, Form } from "./style";
 import { Button } from "../Button";
 import { Input } from "../Input";
 import { formatRHFDefaultValues } from "../../utils/formatRHFDefaultValues";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type FormValues = {
 	[key: string]: string;
@@ -24,7 +24,11 @@ export const GameBoard = () => {
 	const renderHelper = [1, 2, 3, 4, 5]; // helps to render the input matrix
 	const { register, setFocus, handleSubmit, reset } = useForm<FormValues>();
 
+	const isSubmiting = useRef(false);
 	const onSubmit: SubmitHandler<FormValues> = (data) => {
+		if (isSubmiting.current) return;
+		isSubmiting.current = true;
+
 		const attemptNumber = results.length + 1;
 
 		const attemptValues = Object.keys(data)
@@ -34,6 +38,10 @@ export const GameBoard = () => {
 			});
 
 		dispatch(tryToGuess({ attempt: attemptValues }));
+
+		setTimeout(() => {
+			isSubmiting.current = false;
+		}, 5 * 400);
 	};
 
 	useEffect(() => {

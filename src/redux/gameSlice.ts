@@ -41,7 +41,7 @@ export const gameSlice = createSlice({
 			const { attempt } = action.payload;
 			const { sequence } = state;
 
-			if (attempt.includes("")) {
+			if (attempt.includes("") || !attempt[0]) {
 				toast.error("Hey, the sequence must have 5 numbers!", {
 					icon: "😅",
 					toastId: "error-toast",

@@ -21,7 +21,6 @@ const StatsBoard = ({ stats }: StatsBoardProps) => {
 	const histoPercentage = histo.map((value) =>
 		Math.round((value * 100) / games)
 	);
-	console.log({ histoPercentage });
 
 	return (
 		<StatsBoardContainer>
