@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +9,6 @@ import { AttemptLine, Form } from "./style";
 import { Button } from "../Button";
 import { Input } from "../Input";
 import { formatRHFDefaultValues } from "../../utils/formatRHFDefaultValues";
-import { useEffect, useRef } from "react";
 
 type FormValues = {
 	[key: string]: string;
@@ -91,6 +91,7 @@ export const GameBoard = () => {
 												);
 											}
 										}}
+										autoComplete="off"
 									/>
 								);
 							})}

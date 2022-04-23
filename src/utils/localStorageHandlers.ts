@@ -89,7 +89,11 @@ function setGameOver({
 		games: stats.games + 1,
 		wins: won ? stats.wins + 1 : stats.wins,
 	};
-	localStorageObject.stats.histo[lastAttemptNumber - 1]++;
+	if (won) {
+		localStorageObject.stats.histo[lastAttemptNumber - 1]++;
+	} else {
+		localStorageObject.stats.histo[5]++;
+	}
 
 	state.tries.push(lastTry);
 	localStorageObject.state = {
