@@ -14,7 +14,11 @@ import { useGameController } from "../../contexts";
 import { localStorageHandlers } from "../../services";
 import { generateTweet } from "../../utils";
 
-export const ResultsModal = () => {
+interface ResultsModalProps {
+	gameNumber: number;
+}
+
+export const ResultsModal = ({ gameNumber }: ResultsModalProps) => {
 	const { results, isResultsOpen, hideResults } = useGameController();
 
 	const localStats = localStorageHandlers.get();
@@ -30,7 +34,7 @@ export const ResultsModal = () => {
 		value: Math.round((value * 100) / maxHisto),
 	}));
 
-	const tweet = generateTweet(results, 123, true);
+	const tweet = generateTweet(results, gameNumber, true);
 
 	return (
 		<Modal isOpen={isResultsOpen} onClose={hideResults}>

@@ -81,7 +81,7 @@ const Home = ({ gameNumber, sequence }: HomeProps) => {
 				onClose={() => setOpenInstructions(false)}
 			/>
 
-			<ResultsModal />
+			<ResultsModal gameNumber={gameNumber} />
 		</GameControllerProvider>
 	);
 };
