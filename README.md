@@ -17,8 +17,7 @@ You can play it [here](https://thesequencegame.vercel.app).
 ## Technologies
 
 -   [NextJS](https://nextjs.org/)
--   [Styled-components](https://styled-components.com/)
--   [Redux Toolkit](https://redux-toolkit.js.org/)
+-   [Chakra UI](https://chakra-ui.com/)
 -   [Notion](https://www.notion.so/)
 
 🟥🟨🟩🟩🟩
