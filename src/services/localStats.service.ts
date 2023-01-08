@@ -6,11 +6,17 @@ export interface LocalStorageObject {
 	};
 	state: {
 		lastGame: number;
-		tries: string[][];
+		tries: number[][];
 		gameOver: boolean;
 		won: boolean;
 	};
 }
+
+type GameOverParams = {
+	lastAttemptNumber: number;
+	lastTry: number[];
+	won: boolean;
+};
 
 //--------------------------------------------------------------------------------------------------------
 //	Cases to cover:
@@ -47,7 +53,7 @@ function createLocalStorageObject(gameNumber: number): void {
 	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
 }
 
-function updateTries(currentTry: string[]): void {
+function updateTries(currentTry: number[]): void {
 	const localStorageObject = getLocalStorageObject();
 	if (!localStorageObject) return;
 
@@ -67,12 +73,6 @@ function clearLocalStorageState(gameNumber: number): void {
 	};
 	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
 }
-
-type GameOverParams = {
-	lastAttemptNumber: number;
-	lastTry: string[];
-	won: boolean;
-};
 
 function setGameOver({
 	lastAttemptNumber,
