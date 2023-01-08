@@ -3,6 +3,7 @@ import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
 import { useEffect, useRef, useState } from "react";
+import { Footer } from "../components/Footer";
 import { GameBoard } from "../components/GameBoard";
 import { Header } from "../components/Header";
 import { InstructionsModal } from "../components/InstructionsModal";
@@ -62,6 +63,7 @@ const Home = ({ gameNumber, sequence }: HomeProps) => {
 			gameAlreadyFullyPlayed={gameAlreadyFullyPlayed.current}
 		>
 			<Header openInstructions={() => setOpenInstructions(true)} />
+
 			<VStack padding={4} spacing={4}>
 				<Heading textAlign="center" fontSize="2xl">
 					Sequence #{gameNumber}
@@ -71,6 +73,8 @@ const Home = ({ gameNumber, sequence }: HomeProps) => {
 
 				<Keyboard />
 			</VStack>
+
+			<Footer />
 
 			<InstructionsModal
 				isOpen={openInstructions}

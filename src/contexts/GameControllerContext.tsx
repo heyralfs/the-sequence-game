@@ -130,7 +130,7 @@ export const GameControllerProvider = ({
 				won: true,
 			});
 			return setTimeout(() => {
-				setAttemptNumber(-1);
+				setAttemptNumber(6);
 				setFocusedInputIndex(-1);
 				showResults();
 			}, 5 * 500);
