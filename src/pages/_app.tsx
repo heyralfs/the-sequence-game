@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
@@ -34,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			>
 				<Component {...pageProps} />
 			</ChakraProvider>
+			<Analytics />
 		</>
 	);
 }
