@@ -1,41 +1,39 @@
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/globals.css";
-
 import type { AppProps } from "next/app";
-import { ToastContainer } from "react-toastify";
-import Modal from "react-modal";
-
-import { Footer } from "../components/Footer";
-import { GitHubCorner } from "../components/GitHubCorner";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
 import Head from "next/head";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
-	Modal.setAppElement("#__next");
+	const [isAppReady, setIsAppReady] = useState(false);
+	const initialColorMode = useRef("dark");
+
+	useEffect(() => {
+		const colorMode = localStorage.getItem("chakra-ui-color-mode");
+		if (colorMode) {
+			initialColorMode.current = colorMode;
+		}
+		setIsAppReady(true);
+	}, []);
+
+	if (!isAppReady) {
+		return null;
+	}
 
 	return (
 		<>
 			<Head>
 				<title>The Sequence Game</title>
 			</Head>
-			<Provider store={store}>
-				<GitHubCorner projectUrl="https://github.com/heyralfs/the-sequence-game" />
+			<ChakraProvider
+				theme={extendTheme({
+					config: {
+						useSystemColorMode: false,
+						initialColorMode: initialColorMode.current,
+					},
+				})}
+			>
 				<Component {...pageProps} />
-				<Footer />
-
-				<ToastContainer
-					position="top-center"
-					autoClose={5000}
-					hideProgressBar={false}
-					newestOnTop={false}
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss={false}
-					draggable
-					pauseOnHover
-				/>
-			</Provider>
+			</ChakraProvider>
 		</>
 	);
 }

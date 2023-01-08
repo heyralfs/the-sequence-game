@@ -1,62 +1,88 @@
-import type { GetServerSideProps, NextPage } from "next";
-import { useEffect, useState } from "react";
+import { Center, Heading, Spinner, VStack } from "@chakra-ui/react";
 import { Client } from "@notionhq/client";
 import dayjs from "dayjs";
-
-import { useDispatch } from "react-redux";
-import { setInitialValues, setSequence } from "../redux/gameSlice";
-
-import { createSequence } from "../utils/createSequence";
-
-import { Board, Title } from "../styles/Home.style";
-import { Instructions } from "../components/Instructions";
-import { Results } from "../components/Results";
+import { GetServerSideProps } from "next";
+import { useEffect, useRef, useState } from "react";
+import { Footer } from "../components/Footer";
 import { GameBoard } from "../components/GameBoard";
-import { ShowInstructionsButton } from "../components/ShowInstructionsButton";
-import { localStorageHandlers } from "../utils/localStorageHandlers";
+import { Header } from "../components/Header";
+import { InstructionsModal } from "../components/InstructionsModal";
+import { Keyboard } from "../components/Keyboard";
+import { ResultsModal } from "../components/ResultsModal";
+import { GameControllerProvider } from "../contexts";
+import { localStorageHandlers } from "../services";
+import { createSequence } from "../utils";
 
 interface HomeProps {
 	gameNumber: number;
-	sequence: string[];
+	sequence: number[];
 }
 
-const Home: NextPage<HomeProps> = ({ sequence, gameNumber }) => {
+const Home = ({ gameNumber, sequence }: HomeProps) => {
 	const [openInstructions, setOpenInstructions] = useState(false);
-	const dispatch = useDispatch();
+	const [initialValues, setInitialValues] = useState<number[][] | null>(null);
+	const gameAlreadyFullyPlayed = useRef(false);
 
 	useEffect(() => {
 		const sequenceLocalItem = localStorageHandlers.get();
+		const alreadyStartedThisGame =
+			sequenceLocalItem?.state.lastGame === gameNumber;
+
+		let initial: number[][] = [];
 
 		if (!sequenceLocalItem) {
-			localStorageHandlers.create(gameNumber);
 			setOpenInstructions(true);
-		} else if (sequenceLocalItem.state.lastGame === gameNumber) {
-			dispatch(setInitialValues({ sequence, game: sequenceLocalItem }));
+			localStorageHandlers.create(gameNumber);
+		} else if (alreadyStartedThisGame) {
+			initial = sequenceLocalItem.state.tries;
 		} else {
 			localStorageHandlers.clearGameData(gameNumber);
 		}
 
-		dispatch(setSequence(sequence));
-		// eslint-disable-next-line
+		if (sequenceLocalItem && sequenceLocalItem.state.gameOver) {
+			gameAlreadyFullyPlayed.current = true;
+		}
+
+		setInitialValues(initial);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	if (initialValues === null) {
+		return (
+			<Center h="100vh">
+				<Spinner />
+			</Center>
+		);
+	}
+
 	return (
-		<>
-			<Board>
-				<Title>SEQUENCE #{gameNumber}</Title>
+		<GameControllerProvider
+			sequence={sequence}
+			initialValues={initialValues}
+			gameAlreadyFullyPlayed={gameAlreadyFullyPlayed.current}
+		>
+			<Header openInstructions={() => setOpenInstructions(true)} />
+
+			<VStack padding={4} spacing={4}>
+				<Heading textAlign="center" fontSize="2xl">
+					Sequence #{gameNumber}
+				</Heading>
 
 				<GameBoard />
 
-				<Results gameNumber={gameNumber} />
-			</Board>
+				<Keyboard />
+			</VStack>
 
-			<ShowInstructionsButton onClick={() => setOpenInstructions(true)} />
+			<Footer />
 
-			<Instructions
+			<InstructionsModal
 				isOpen={openInstructions}
-				onRequestClose={() => setOpenInstructions(false)}
+				onClose={() => setOpenInstructions(false)}
 			/>
-		</>
+
+			<ResultsModal />
+		</GameControllerProvider>
 	);
 };
 
@@ -77,15 +103,16 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 		},
 	});
 
-	let sequence: string[];
+	let sequence: number[];
 	let gameNumber: number;
 
 	if (results.length) {
 		// 👇 https://github.com/makenotion/notion-sdk-js/issues/154
 		const sequenceData: any = results[0];
 
-		sequence =
-			sequenceData.properties.Sequence.title[0].text.content.split("");
+		sequence = sequenceData.properties.Sequence.title[0].text.content
+			.split("")
+			.map((x: string) => Number(x));
 		gameNumber = sequenceData.properties.Number.number;
 	} else {
 		sequence = createSequence();

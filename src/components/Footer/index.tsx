@@ -1,25 +1,25 @@
-import { StyledFooter } from "./style";
-import { SiNextdotjs, SiNotion, SiStyledcomponents } from "react-icons/si";
+import { HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { SiChakraui, SiNotion, SiNextdotjs } from "react-icons/si";
 
 export const Footer = () => {
 	return (
-		<StyledFooter>
-			<p>Made with ❤️ and</p>
-			<div className="tech-icons">
-				<a href="https://nextjs.org" target="_blank" rel="noreferrer">
-					<SiNextdotjs title="NextJS" />
-				</a>
-				<a
-					href="https://styled-components.com"
+		<VStack padding={4} w="full">
+			<Text fontSize="xs">Developed with ❤️ and </Text>
+			<HStack>
+				<SiChakraui />
+				<SiNotion />
+				<SiNextdotjs />
+			</HStack>
+			<Text fontSize="xs">
+				by{" "}
+				<Link
+					href="https://github.com/heyralfs"
+					textDecor="underline"
 					target="_blank"
-					rel="noreferrer"
 				>
-					<SiStyledcomponents title="Styled-components" />
-				</a>
-				<a href="https://notion.so" target="_blank" rel="noreferrer">
-					<SiNotion title="Notion" />
-				</a>
-			</div>
-		</StyledFooter>
+					heyralfs
+				</Link>
+			</Text>
+		</VStack>
 	);
 };
