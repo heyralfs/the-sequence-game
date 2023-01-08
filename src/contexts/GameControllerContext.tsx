@@ -125,7 +125,7 @@ export const GameControllerProvider = ({
 
 		if (playerWon) {
 			localStorageHandlers.setGameOver({
-				lastAttemptNumber: results.length,
+				lastAttemptNumber: attemptNumber,
 				lastTry: currentAttempt,
 				won: true,
 			});
@@ -138,7 +138,7 @@ export const GameControllerProvider = ({
 
 		if (attemptNumber > 4) {
 			localStorageHandlers.setGameOver({
-				lastAttemptNumber: results.length,
+				lastAttemptNumber: attemptNumber,
 				lastTry: currentAttempt,
 				won: false,
 			});
