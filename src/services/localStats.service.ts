@@ -30,8 +30,10 @@ type GameOverParams = {
 //	✅ Game over (wheter the player won or lost) // Update stats, when the game is over
 //--------------------------------------------------------------------------------------------------------
 
+const localItemName = "sequence-game";
+
 function getLocalStorageObject(): LocalStorageObject | undefined {
-	const localStorageObject = localStorage.getItem("sequence-game");
+	const localStorageObject = localStorage.getItem(localItemName);
 	if (!localStorageObject) return undefined;
 	return JSON.parse(localStorageObject);
 }
@@ -50,7 +52,7 @@ function createLocalStorageObject(gameNumber: number): void {
 			won: false,
 		},
 	};
-	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
+	localStorage.setItem(localItemName, JSON.stringify(localStorageObject));
 }
 
 function updateTries(currentTry: number[]): void {
@@ -58,7 +60,7 @@ function updateTries(currentTry: number[]): void {
 	if (!localStorageObject) return;
 
 	localStorageObject.state.tries.push(currentTry);
-	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
+	localStorage.setItem(localItemName, JSON.stringify(localStorageObject));
 }
 
 function clearLocalStorageState(gameNumber: number): void {
@@ -71,7 +73,7 @@ function clearLocalStorageState(gameNumber: number): void {
 		gameOver: false,
 		won: false,
 	};
-	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
+	localStorage.setItem(localItemName, JSON.stringify(localStorageObject));
 }
 
 function setGameOver({
@@ -103,7 +105,7 @@ function setGameOver({
 		tries: state.tries,
 	};
 
-	localStorage.setItem("sequence-game", JSON.stringify(localStorageObject));
+	localStorage.setItem(localItemName, JSON.stringify(localStorageObject));
 }
 
 export const localStorageHandlers = {

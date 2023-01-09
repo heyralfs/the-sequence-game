@@ -34,7 +34,7 @@ export const ResultsModal = ({ gameNumber }: ResultsModalProps) => {
 		value: Math.round((value * 100) / maxHisto),
 	}));
 
-	const tweet = generateTweet(results, gameNumber, true);
+	const tweet = generateTweet(results, gameNumber, won);
 
 	return (
 		<Modal isOpen={isResultsOpen} onClose={hideResults}>

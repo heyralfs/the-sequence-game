@@ -21,7 +21,7 @@ interface HomeProps {
 const Home = ({ gameNumber, sequence }: HomeProps) => {
 	const [openInstructions, setOpenInstructions] = useState(false);
 	const [initialValues, setInitialValues] = useState<number[][] | null>(null);
-	const gameAlreadyFullyPlayed = useRef(false);
+	const [gameAlreadyFullyPlayed, setGameAlreadyFullyPlayed] = useState(false);
 
 	useEffect(() => {
 		const sequenceLocalItem = localStorageHandlers.get();
@@ -35,12 +35,11 @@ const Home = ({ gameNumber, sequence }: HomeProps) => {
 			localStorageHandlers.create(gameNumber);
 		} else if (alreadyStartedThisGame) {
 			initial = sequenceLocalItem.state.tries;
+			if (sequenceLocalItem.state.gameOver) {
+				setGameAlreadyFullyPlayed(true);
+			}
 		} else {
 			localStorageHandlers.clearGameData(gameNumber);
-		}
-
-		if (sequenceLocalItem && sequenceLocalItem.state.gameOver) {
-			gameAlreadyFullyPlayed.current = true;
 		}
 
 		setInitialValues(initial);
@@ -60,7 +59,7 @@ const Home = ({ gameNumber, sequence }: HomeProps) => {
 		<GameControllerProvider
 			sequence={sequence}
 			initialValues={initialValues}
-			gameAlreadyFullyPlayed={gameAlreadyFullyPlayed.current}
+			gameAlreadyFullyPlayed={gameAlreadyFullyPlayed}
 		>
 			<Header openInstructions={() => setOpenInstructions(true)} />
 
