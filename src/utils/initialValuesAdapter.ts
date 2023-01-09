@@ -15,6 +15,5 @@ export function initialValuesAdapter(
 				.slice(0, 5)
 		: emptyInitialValues;
 
-	console.log(adaptedValues);
 	return [...adaptedValues];
 }
