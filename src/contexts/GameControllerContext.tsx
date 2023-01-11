@@ -68,7 +68,7 @@ export const GameControllerProvider = ({
 	}
 
 	function onNumberClick(value: number) {
-		if (attemptNumber > 5) return;
+		if (attemptNumber > 5 || focusedInputIndex > 4) return;
 
 		const updatedAttempts = [...attempts];
 		updatedAttempts[attemptNumber - 1][focusedInputIndex] = value;
@@ -80,8 +80,11 @@ export const GameControllerProvider = ({
 		if (attemptNumber > 5) return;
 
 		const updatedAttempts = [...attempts];
-		// if focused input has value
-		if (updatedAttempts[attemptNumber - 1][focusedInputIndex] !== null) {
+		// if there is a focused input and it has value
+		if (
+			focusedInputIndex < 5 &&
+			updatedAttempts[attemptNumber - 1][focusedInputIndex] !== null
+		) {
 			updatedAttempts[attemptNumber - 1][focusedInputIndex] = null;
 		} else {
 			updatedAttempts[attemptNumber - 1][focusedInputIndex - 1] = null;
